@@ -1,26 +1,27 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, {useReducer} from 'react';
+import BeeTracker from "./BeeTracker";
+import {initialState, reducer} from "./BeeState";
+
+export const BeeContext = React.createContext(initialState)
+
+export const BeeState = (props) => (
+    <BeeContext.Provider value={{state: props.state, dispatch: props.dispatch}}>
+        {props.children}
+    </BeeContext.Provider>
+)
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    const [state, dispatch] = useReducer(reducer, initialState)
+
+    const total = Object.keys(state).reduce((total, key) => {
+        return total+=state[key]
+    }, 0)
+
+    return <BeeState state={state} dispatch={dispatch}>
+        <h1>You've seen a total of {total} bees</h1>
+        <BeeTracker label="Bombus muscorum"/>
+        <BeeTracker label="Bombus pascuorum"/>
+    </BeeState>
 }
 
 export default App;
