@@ -14,14 +14,14 @@ const BeeTracker = props => {
         data-testid="decrement"
         onClick={() => dispatch(decrementBeesSpotted(props.label))}
       >
-        -
+        🐝-
       </button>
       <span data-testid="bee-count">Spotted {count} times</span>
       <button
         data-testid="increment"
         onClick={() => dispatch(incrementBeesSpotted(props.label))}
       >
-        +
+        🐝+
       </button>
     </section>
   );
