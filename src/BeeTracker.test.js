@@ -1,48 +1,45 @@
 import Bee from './BeeTracker'
-import {render, fireEvent} from "@testing-library/react";
+import {fireEvent, render} from "@testing-library/react";
 import React from "react";
-import {BeeState} from "./App";
+import {BeeProvider} from "./App";
 import {decrementBeesSpotted, incrementBeesSpotted} from "./BeeState";
 
 describe('bee tracker', () => {
     const beeName = "bumble"
+    const dispatch = jest.fn()
+
+    beforeEach(() => dispatch.mockReset())
 
     test('it renders the bee count', () => {
-        const state = {bumble: 2}
-
         const {getByTestId} = render(
-            <BeeState state={state}><Bee label={beeName}/></BeeState>
+            <BeeProvider state={{bumble: 2}}><Bee label={beeName}/></BeeProvider>
         )
         expect(getByTestId('bee-count').innerHTML).toEqual('Spotted 2 times')
     })
 
-    test('it sends increment action', () => {
-        const dispatch = jest.fn()
+    describe('dispatch', () => {
+        test('it sends increment action when + is clicked', () => {
+            const {getByTestId} = render(
+                <BeeProvider state={{bumble: 2}} dispatch={dispatch}><Bee label={beeName}/></BeeProvider>
+            )
+            fireEvent.click(getByTestId('increment'))
+            expect(dispatch).toBeCalledWith(incrementBeesSpotted(beeName))
+        })
 
-        const {getByTestId} = render(
-            <BeeState state={{bumble: 2}} dispatch={dispatch}><Bee label={beeName}/></BeeState>
-        )
-        fireEvent.click(getByTestId('increment'))
-        expect(dispatch).toBeCalledWith(incrementBeesSpotted(beeName))
-    })
+        test('it sends decrement action when - is clicked', () => {
+            const {getByTestId} = render(
+                <BeeProvider state={{bumble: 2}} dispatch={dispatch}><Bee label={beeName}/></BeeProvider>
+            )
+            fireEvent.click(getByTestId('decrement'))
+            expect(dispatch).toBeCalledWith(decrementBeesSpotted(beeName))
+        })
 
-    test('it sends decrement action', () => {
-        const dispatch = jest.fn()
-
-        const {getByTestId} = render(
-            <BeeState state={{bumble: 2}} dispatch={dispatch}><Bee label={beeName}/></BeeState>
-        )
-        fireEvent.click(getByTestId('decrement'))
-        expect(dispatch).toBeCalledWith(decrementBeesSpotted(beeName))
-    })
-
-    test('cant see negative number of bees', () => {
-        const dispatch = jest.fn()
-
-        const {getByTestId} = render(
-            <BeeState state={{bumble: 0}} dispatch={dispatch}><Bee label={beeName}/></BeeState>
-        )
-        fireEvent.click(getByTestId('decrement'))
-        expect(dispatch).not.toBeCalled()
+        test('wont dispatch decrement when count is at 0', () => {
+            const {getByTestId} = render(
+                <BeeProvider state={{bumble: 0}} dispatch={dispatch}><Bee label={beeName}/></BeeProvider>
+            )
+            fireEvent.click(getByTestId('decrement'))
+            expect(dispatch).not.toBeCalled()
+        })
     })
 })

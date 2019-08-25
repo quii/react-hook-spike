@@ -1,18 +1,18 @@
-export const initialState = {}
+export const initialState = {total: 0}
 
 export const reducer = (state, action) => {
-    console.log(state, action)
-
-    switch(action.type) {
+    switch (action.type) {
         case INCREMENT_BEE:
             return {
                 ...state,
-                [action.bee]: (state[action.bee] ? state[action.bee] : 0)+1
+                total: state.total + 1,
+                [action.bee]: (state[action.bee] ? state[action.bee] : 0) + 1
             }
         case DECREMENT_BEE:
             return {
                 ...state,
-                [action.bee]: (state[action.bee] ? state[action.bee] : 0)-1
+                total: state.total - 1,
+                [action.bee]: (state[action.bee] ? state[action.bee] : 0) - 1
             }
     }
 }

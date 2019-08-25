@@ -4,24 +4,20 @@ import {initialState, reducer} from "./BeeState";
 
 export const BeeContext = React.createContext(initialState)
 
-export const BeeState = (props) => (
+export const BeeProvider = (props) => (
     <BeeContext.Provider value={{state: props.state, dispatch: props.dispatch}}>
         {props.children}
     </BeeContext.Provider>
 )
 
-function App() {
+const App = () => {
     const [state, dispatch] = useReducer(reducer, initialState)
 
-    const total = Object.keys(state).reduce((total, key) => {
-        return total+=state[key]
-    }, 0)
-
-    return <BeeState state={state} dispatch={dispatch}>
-        <h1>You've seen a total of {total} bees</h1>
+    return <BeeProvider state={state} dispatch={dispatch}>
+        <h1>You've seen a total of {state.total} bees</h1>
         <BeeTracker label="Bombus muscorum"/>
         <BeeTracker label="Bombus pascuorum"/>
-    </BeeState>
+    </BeeProvider>
 }
 
 export default App;
